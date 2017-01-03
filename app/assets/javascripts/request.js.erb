@@ -1,0 +1,363 @@
+function ultimateRequest(lat, lng) {
+
+	clearOverlays();
+
+	var radius = $("#radius").val();
+	var communitycentres = 0;
+	var crimes = 0;
+	var libraries = 0;
+	var parks = 0;
+	var schools = 0;
+	var stations =0;
+
+	// Community Centres
+	if ($("#commcentres").is(":checked")) {
+    	$.ajax({
+	        url : "/communitycentres?lat=" + lat + "&lng=" + lng + "&radius=" + radius,
+	        type : "get",
+	        async: false,
+	        dataType: "json",
+	        success: function(data)  {
+        		var icon = {
+			        url: '<%= asset_path('community.png') %>',
+			        size: new google.maps.Size(24, 27),
+			        origin: new google.maps.Point(0, 0),
+			        anchor: new google.maps.Point(12, 27),
+			        scaledSize: new google.maps.Size(24, 27)
+			    };
+	            for (var i = 0; i < data.length; i++) {
+	            	curr = data[i]
+	            	var latLng = new google.maps.LatLng(curr.latitude,curr.longitude);
+	        	    var marker = new google.maps.Marker({
+				        map: map,
+				        icon: icon,
+				        title: curr.name,
+				        position: latLng
+			      	});
+
+			      	markers.push(marker);
+
+				    var infoWindowContent = '<div class="info_content">' +
+				        '<h3>' + curr.name + '</h3>' +
+				        '<p>Address: ' + curr.address + '</p>' +
+				        '<p>Website: ' + curr.website + '</p>' +
+				    '</div>';
+
+				    var infoWindow = new google.maps.InfoWindow({
+				        content: infoWindowContent
+				    });
+
+		            bindInfoWindow(marker, map, infoWindow);
+	            }
+	            communitycentres = data.length;
+	        }
+	    })
+	}
+
+	// Libraries
+	if ($("#libraries").is(":checked")) {
+    	$.ajax({
+	        url : "/libraries?lat=" + lat + "&lng=" + lng + "&radius=" + radius,
+	        type : "get",
+	        async: false,
+	        dataType: "json",
+	        success: function(data)  {
+        		var icon = {
+			        url: '<%= asset_path('library.png') %>',
+			        size: new google.maps.Size(24, 27),
+			        origin: new google.maps.Point(0, 0),
+			        anchor: new google.maps.Point(12, 27),
+			        scaledSize: new google.maps.Size(24, 27)
+			    };
+	            for (var i = 0; i < data.length; i++) {
+	            	curr = data[i]
+	            	var latLng = new google.maps.LatLng(curr.latitude,curr.longitude);
+	        	    var marker = new google.maps.Marker({
+				        map: map,
+				        icon: icon,
+				        title: curr.name,
+				        position: latLng
+			      	});
+
+			      	markers.push(marker);
+
+				    var infoWindowContent = '<div class="info_content">' +
+				        '<h3>' + curr.name + '</h3>' +
+				        '<p>Address: ' + curr.address + '</p>' +
+				        '<p>Website: ' + curr.website + '</p>' +
+				    '</div>';
+
+				    var infoWindow = new google.maps.InfoWindow({
+				        content: infoWindowContent
+				    });
+
+		            bindInfoWindow(marker, map, infoWindow);
+	            }
+	            libraries = data.length;
+	        }
+	    })
+	}
+
+	// Parks
+	if ($("#parks").is(":checked")) {
+    	$.ajax({
+	        url : "/parks?lat=" + lat + "&lng=" + lng + "&radius=" + radius,
+	        type : "get",
+	        async: false,
+	        dataType: "json",
+	        success: function(data)  {
+        		var icon = {
+			        url: '<%= asset_path('parks.png') %>',
+			        size: new google.maps.Size(24, 27),
+			        origin: new google.maps.Point(0, 0),
+			        anchor: new google.maps.Point(12, 27),
+			        scaledSize: new google.maps.Size(24, 27)
+			    };
+	            for (var i = 0; i < data.length; i++) {
+	            	curr = data[i]
+	            	var latLng = new google.maps.LatLng(curr.latitude,curr.longitude);
+	        	    var marker = new google.maps.Marker({
+				        map: map,
+				        icon: icon,
+				        title: curr.name,
+				        position: latLng
+			      	});
+
+			      	markers.push(marker);
+
+				    var infoWindowContent = '<div class="info_content">' +
+				        '<h3>' + curr.name + '</h3>' +
+				        '<p>Address: ' + curr.address + '</p>' +
+				        '<p>Website: ' + curr.website + '</p>' +
+				    '</div>';
+
+				    var infoWindow = new google.maps.InfoWindow({
+				        content: infoWindowContent
+				    });
+
+		            bindInfoWindow(marker, map, infoWindow);
+	            }
+	            parks = data.length;
+	        }
+	    })
+	}
+
+	// Schools
+	if ($("#schools").is(":checked")) {
+    	$.ajax({
+	        url : "/schools?lat=" + lat + "&lng=" + lng + "&radius=" + radius,
+	        type : "get",
+	        async: false,
+	        dataType: "json",
+	        success: function(data)  {
+        		var icon = {
+			        url: '<%= asset_path('school.png') %>',
+			        size: new google.maps.Size(24, 27),
+			        origin: new google.maps.Point(0, 0),
+			        anchor: new google.maps.Point(12, 27),
+			        scaledSize: new google.maps.Size(24, 27)
+			    };
+	            for (var i = 0; i < data.length; i++) {
+	            	curr = data[i]
+	            	var latLng = new google.maps.LatLng(curr.latitude,curr.longitude);
+	        	    var marker = new google.maps.Marker({
+				        map: map,
+				        icon: icon,
+				        title: curr.name,
+				        position: latLng
+			      	});
+
+			      	markers.push(marker);
+
+				    var infoWindowContent = '<div class="info_content">' +
+				        '<h3>' + curr.name + '</h3>' +
+				        '<p>Address: ' + curr.address + '</p>' +
+				        '<p>Website: ' + curr.website + '</p>' +
+				    '</div>';
+
+				    var infoWindow = new google.maps.InfoWindow({
+				        content: infoWindowContent
+				    });
+
+		            bindInfoWindow(marker, map, infoWindow);
+	            }
+	            schools = data.length;
+	        }
+	    })
+	}
+
+	// Stations
+	if ($("#stations").is(":checked")) {
+    	$.ajax({
+	        url : "/stations?lat=" + lat + "&lng=" + lng + "&radius=" + radius,
+	        type : "get",
+	        async: false,
+	        dataType: "json",
+	        success: function(data)  {
+        		var icon = {
+			        url: '<%= asset_path('bus.png') %>',
+			        size: new google.maps.Size(24, 27),
+			        origin: new google.maps.Point(0, 0),
+			        anchor: new google.maps.Point(12, 27),
+			        scaledSize: new google.maps.Size(24, 27)
+			    };
+	            for (var i = 0; i < data.length; i++) {
+	            	curr = data[i]
+	            	var latLng = new google.maps.LatLng(curr.latitude,curr.longitude);
+	        	    var marker = new google.maps.Marker({
+				        map: map,
+				        icon: icon,
+				        title: curr.name,
+				        position: latLng
+			      	});
+
+			      	markers.push(marker);
+
+				    var infoWindowContent = '<div class="info_content">' +
+				        '<h3>' + curr.name + '</h3>' +
+				    '</div>';
+
+				    var infoWindow = new google.maps.InfoWindow({
+				        content: infoWindowContent
+				    });
+
+		            bindInfoWindow(marker, map, infoWindow);
+	            }
+	            stations = data.length;
+	        }
+	    })
+	}
+
+	// Crimes
+	if ($("#crimes").is(":checked")) {
+    	$.ajax({
+	        url : "/crimes?lat=" + lat + "&lng=" + lng + "&radius=" + radius,
+	        type : "get",
+	        async: false,
+	        dataType: "json",
+	        success: function(data)  {
+        		var icon = {
+			        url: '<%= asset_path('robbery.png') %>',
+			        size: new google.maps.Size(24, 27),
+			        origin: new google.maps.Point(0, 0),
+			        anchor: new google.maps.Point(12, 27),
+			        scaledSize: new google.maps.Size(24, 27)
+			    };
+
+	            for (var i = 0; i < data.length; i++) {
+	            	curr = data[i]
+	            	crimes = crimes + curr.occurrences;
+	            	var latLng = new google.maps.LatLng(curr.latitude,curr.longitude);
+	        	    var marker = new google.maps.Marker({
+				        map: map,
+				        icon: icon,
+				        title: curr.description,
+				        position: latLng
+			      	});
+
+			      	markers.push(marker);
+
+				    var infoWindowContent = '<div class="info_content">' +
+				        '<h3>' + curr.description + '</h3>' +
+				        '<p>Occurrences: ' + curr.occurrences + '</p>' +
+				    '</div>';
+
+				    var infoWindow = new google.maps.InfoWindow({
+				        content: infoWindowContent
+				    });
+
+		            bindInfoWindow(marker, map, infoWindow);
+	            }
+	        }
+	    })
+	}
+	return calculateScore(lat,lng,radius);
+	// return ((communitycentres + libraries + parks + schools + stations)/(communitycentres + crimes + libraries + parks + schools + stations)*10);
+}
+
+function bindInfoWindow(marker, map, infowindow) {
+    google.maps.event.addListener(marker, 'click', function() {
+    	if (currInfoWindow != null) {
+    		currInfoWindow.close();
+    	}
+        currInfoWindow = infowindow;
+        currInfoWindow.open(map, marker);
+
+	});
+}
+
+function clearOverlays() {
+  for (var i = 0; i < markers.length; i++ ) {
+    markers[i].setMap(null);
+  }
+  markers.length = 0;
+  for (var i = 0; i < polygons.length; i++ ) {
+    polygons[i].setMap(null);
+  }
+  polygons.length = 0;
+}
+
+function selectAllCriteria(){
+	var button = document.getElementById("selectBttn");
+
+	if (button.value == "Select All") {
+		$("#commcentres").prop('checked', true);
+		$("#crimes").prop('checked', true);
+		$("#libraries").prop('checked', true);
+		$("#parks").prop('checked', true);
+		$("#schools").prop('checked', true);
+		$("#stations").prop('checked', true);
+		button.value = "Deselect All";
+	} else {
+		$("#commcentres").prop('checked', false);
+		$("#crimes").prop('checked', false);
+		$("#libraries").prop('checked', false);
+		$("#parks").prop('checked', false);
+		$("#schools").prop('checked', false);
+		$("#stations").prop('checked', false);
+		button.value = "Select All";
+	}
+}
+
+function calculateScore(lat,lng,radius){
+	var url = "/score?lat=" + lat + "&lng=" + lng + "&radius=" + radius;
+	if ($("#commcentres").is(":checked")) {
+		url = url + "&commcentres=on";
+	}
+	if ($("#libraries").is(":checked")) {
+		url = url + "&libraries=on";
+	}
+	if ($("#parks").is(":checked")) {
+		url = url + "&parks=on";
+	}
+	if ($("#schools").is(":checked")) {
+		url = url + "&schools=on";
+	}
+	if ($("#stations").is(":checked")) {
+		url = url + "&stations=on";
+	}
+	if ($("#crimes").is(":checked")) {
+		url = url + "&crimes=on";
+	}
+	var locScore;
+	if (!$("#commcentres").is(":checked") && 
+		!$("#libraries").is(":checked") &&
+		!$("#parks").is(":checked") &&
+		!$("#schools").is(":checked") &&
+		!$("#stations").is(":checked") &&
+		!$("#crimes").is(":checked")) {
+		locScore = 10;
+	} else {
+			$.ajax({
+				url : url,
+				type : 'GET',
+				async: false,
+				dataType: "json",
+				success: function(data)  {
+					locScore = data;
+					console.log(locScore);
+				}
+			})
+	}
+	return locScore;
+}

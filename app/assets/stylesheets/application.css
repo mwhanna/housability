@@ -1,0 +1,156 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+ 
+ /*General CSS for the document*/
+#body{
+    background-color:#960018;
+    font-family: Arial;
+  }
+  #header{
+    font-family: Arial;
+    color: white;
+    font-size: 250%;
+    text-align: center;
+  }
+  #sidebar{
+    position:relative;
+    height: 85%;
+    width: 24%;
+    float: left;
+    background-color: #E4E4E4;
+    border: 2px solid transparent;
+    padding: 3px;
+    min-width: 310px;
+  }
+  #embeded {
+    background-color: black;
+    background-repeat: repeat-x;
+    color: #fff;
+    font-size: 150%;
+    margin: 0;
+  }
+
+/*CSS from the middle of the document. Map Stuff*/
+html, body {
+	height: 100%;
+	margin: 5;
+	padding: 5;
+}
+#map {
+	height: 85%;
+}
+.controls {
+	margin-top: 10px;
+	border: 1px solid transparent;
+	border-radius: 2px 0 0 2px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	height: 32px;
+	outline: none;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+#pac-input {
+	background-color: #fff;
+	font-family: Roboto;
+	font-size: 15px;
+	font-weight: 300;
+	margin-left: 12px;
+	padding: 0 11px 0 13px;
+	text-overflow: ellipsis;
+	width: 300px;
+}
+
+#pac-input:focus {
+	border-color: #4d90fe;
+}
+
+.pac-container {
+	font-family: Roboto;
+}
+
+#type-selector {
+	color: #fff;
+ 	background-color: #4d90fe;
+ 	padding: 5px 11px 0px 11px;
+}
+
+#type-selector label {	
+	font-family: Roboto;
+	font-size: 13px;
+	font-weight: 300;
+}
+#target {
+	width: 345px;
+}
+
+/* CSS for user account buttons */
+
+#myButton {
+	-moz-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+	box-shadow:inset 0px 1px 0px 0px #54a3f7;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #007dc1), color-stop(1, #0061a7));
+	background:-moz-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+	background:-webkit-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+	background:-o-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+	background:-ms-linear-gradient(top, #007dc1 5%, #0061a7 100%);
+	background:linear-gradient(to bottom, #007dc1 5%, #0061a7 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#007dc1', endColorstr='#0061a7',GradientType=0);
+	background-color:#007dc1;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+	border:1px solid #124d77;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:13px;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #154682;
+}
+#myButton:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0061a7), color-stop(1, #007dc1));
+	background:-moz-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+	background:-webkit-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+	background:-o-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+	background:-ms-linear-gradient(top, #0061a7 5%, #007dc1 100%);
+	background:linear-gradient(to bottom, #0061a7 5%, #007dc1 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0061a7', endColorstr='#007dc1',GradientType=0);
+	background-color:#0061a7;
+}
+#myButton:active {
+	position:relative;
+	top:1px;
+}
+
+/* CCS for user authentication pages */
+  #body{
+    background-color:#960018;
+    font-family: Arial; 
+  }
+  #header{
+    font-family: Arial;
+    color: white;
+    font-size: 250%;
+    text-align: center;
+}
+  #smallHeader{
+    color: white;
+    font-size: 150%;
+  }

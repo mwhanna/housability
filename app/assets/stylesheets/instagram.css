@@ -1,0 +1,28 @@
+#instagram {
+	width: 163px;
+	text-align: right;
+}
+
+#instagramPhotos {
+	margin-right: 3px;
+	padding-top: 5px;
+	display: none;
+	width: 160px;
+	background-color: #cccccc;
+	border-radius: 10px;
+}
+
+.instagramPhotos {
+	width: 150px;
+	padding-right: 5px;
+	border-radius: 10px;
+	padding-bottom: 5px;
+}
+
+#instagramButton {
+	display: none;
+	width: 50px;
+	height: 50px;
+	cursor: pointer;
+	right: 0px;	
+}

@@ -1,0 +1,586 @@
+// This is a manifest file that'll be compiled into application.js, which will include all the files
+// listed below.
+//
+// Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
+// or any plugin's vendor/assets/javascripts directory can be referenced here using a relative path.
+//
+// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
+// compiled file.
+//
+// Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
+// about supported directives.
+//
+//= require jquery
+//= require jquery_ujs
+//= require turbolinks
+//= require underscore
+//= require gmaps/google
+//= require_tree .
+
+function initAutocomplete() {
+
+
+  currRadius = null;
+  currInfoWindow = null;
+  markers = [];
+  polygons = [];
+  access_token = "";
+  instagram_user = "";
+  user_id = -1;
+
+  $.ajax({
+    url : "/current_user",
+    type : "get",
+    async: false,
+    success: function(data)  {
+      access_token = data.access_token;
+      instagram_user = data.instagram_user;
+      user_id = data.user_id;
+    }
+  });
+
+  if (user_id == undefined) {
+      showCriteria();
+      $("#recentsearches").hide();
+      $("#livingcriteria").hide();
+      $("#favorites").hide();
+  } else {
+      showCriteria();
+  }
+
+  if (access_token == null || access_token == "") {
+    linked  = false;
+  } else {
+    linked = true;
+  }
+
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 49.248619, lng: -123.138714},
+    zoom: 12,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  });
+
+  // Create the search box and link it to the UI element.
+  var input = document.getElementById('pac-input');
+  searchBox = new google.maps.places.SearchBox(input);
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+  // Add Instagram button to map
+  var instagramButton = document.getElementById('instagram');
+  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(instagramButton);
+
+  // Bias the SearchBox results towards current map's viewport.
+  map.addListener('bounds_changed', function() {
+    searchBox.setBounds(map.getBounds());
+  });
+
+  // [START region_getplaces]
+  // Listen for the event fired when the user selects a prediction and retrieve
+  // more details for that place.
+  searchBox.addListener('places_changed', function() {
+    document.getElementById("loadLocation").disabled = false;
+    loadLocation();
+  });
+}
+
+function loadLocation(){
+  var neighborhoodsButton = document.getElementById("loadNeighborhoods");
+  neighborhoodsButton.value = "Show Neighborhoods";
+  var places = searchBox.getPlaces();
+  if (places.length == 0) {
+    return;
+  }
+
+  // Remove old instagram photos
+  $('.instagramPhotos').remove();
+  $('.instagramLinks').remove();
+  $('.likeBttn').remove();
+  $("#instagramPhotos").hide();
+
+
+  // For each place, get the icon, name and location.
+  var bounds = new google.maps.LatLngBounds();
+  places.forEach(function(place) {
+
+    var score = ultimateRequest(place.geometry.location.lat(),place.geometry.location.lng());
+    console.log("Location Score: " + score);
+    
+    if (user_id != undefined) {
+      $.ajax({
+        url : "/housability",
+        type : "post",
+        data : { data_value: JSON.stringify(place.formatted_address),
+          latitude: JSON.stringify(place.geometry.location.lat()),
+          longitude: JSON.stringify(place.geometry.location.lat()),
+          userid: JSON.stringify(user_id),
+          score: JSON.stringify(score)
+        }
+      });
+    }
+
+    // Instagram Photos
+    $.ajax({
+      url : "/photo?lat=" + place.geometry.location.lat() + "&lng=" + place.geometry.location.lng(),
+      type : "get",
+      dataType: "json",
+      success: function(data)  {
+          for (var i = 0; i < data.length; i++) {
+            var like = "Like";
+            if (linked) {
+                $.ajax({
+                  url : "/photo?id=" + data[i].id,
+                  type : "get",
+                  async: false,
+                  success: function(likes)  {
+                    for (var i = 0; i < likes.length; i++) {
+                      if (likes[i].username == instagram_user) {
+                        like = "Unlike";
+                      }
+                    }
+                  }
+                });
+              $("#instagramPhotos").append("<a href='" + data[i].link + "' target='_blank' class='instagramLinks'><img class='instagramPhotos' src='" + data[i].images.standard_resolution.url +"'></img></a>"
+                + "<input onclick='likePhoto(\"" + data[i].id + "\")' type='button' value='" + like + "' class='likeBttn' id='photo-" + data[i].id + "'></input>");
+            } else {
+              $("#instagramPhotos").append("<a href='" + data[i].link + "' target='_blank' class='instagramLinks'><img class='instagramPhotos' src='" + data[i].images.standard_resolution.url +"'></img></a>");
+            }
+          }
+      }
+    });
+    $("#instagramButton").fadeIn();
+
+    // Create a marker for each place.
+    var marker = new google.maps.Marker({
+      map: map,
+      title: place.name,
+      position: place.geometry.location
+    });
+
+    var infoWindowContent = '<div class="info_content">' +
+      '<h3>' + place.formatted_address + '</h3>' +
+      '<p>Score: ' + score + '</p>' +
+      '</div>';
+
+    var infoWindow = new google.maps.InfoWindow({
+      content: infoWindowContent
+    });
+
+    bindInfoWindow(marker, map, infoWindow);
+    markers.push(marker);
+
+    score = Math.round(score);
+    // Radius
+    if (currRadius != null) {
+      currRadius.setMap(null);
+    }
+    var radius = $("#radius").val();
+    var color;
+    switch (score) {
+  case 0:
+    color = '#FF0000';
+    break;
+  case 1:
+    color = '#FF4500';
+    break;
+  case 2:
+    color = '#FF0000';
+    break;
+  case 3:
+    color = '#FF0000';
+    break;
+  case 4:
+    color = '#FFA500';
+    break;
+  case 5:
+    color = '#7CFC00';
+    break;
+  case 6:
+    color = '#228B22';
+    break;
+  case 7:
+    color = '#7CFC00';
+    break;
+  case 8:
+    color = '#32CD32';
+    break;
+  case 9:
+    color = '#228B22';
+    break;
+  case 10:
+    color = '#228B22';
+    break;
+  default:
+    color = '#FFFF00';
+    break;
+    }
+    var circle = new google.maps.Circle({
+      map: map,
+      radius: radius*1000,
+      fillColor: color,
+      strokeWeight: 1,
+      center: place.geometry.location
+    });
+    currRadius = circle;
+    currRadius.bindTo('center', marker, 'position');
+
+      if (place.geometry.viewport) {
+      // Only geocodes have viewport.
+      bounds.union(place.geometry.viewport);
+    } else {
+      bounds.extend(place.geometry.location);
+    }
+  });
+  map.fitBounds(currRadius.getBounds());
+}
+
+function loadNeighborhoods() {
+  var button = document.getElementById("loadNeighborhoods");
+
+  if (button.value == "Show Neighborhoods") {
+    button.value = "Hide Neighborhoods";
+  } else {
+    clearOverlays();
+    button.value = "Show Neighborhoods";
+    return;
+  }
+
+  resetSearch();
+  if (currRadius != null) {
+      currRadius.setMap(null);
+  }
+
+  //Function for drawing polygon
+  function drawingPolygon(polygonCoords, score) {
+    var color;
+    switch (score) {
+  case 0:
+    color = '#FF0000';
+    break;
+  case 1:
+    color = '#FF4500';
+    break;
+  case 2:
+    color = '#FF0000';
+    break;
+  case 3:
+    color = '#FF0000';
+    break;
+  case 4:
+    color = '#FFA500';
+    break;
+  case 5:
+    color = '#7CFC00';
+    break;
+  case 6:
+    color = '#228B22';
+    break;
+  case 7:
+    color = '#7CFC00';
+    break;
+  case 8:
+    color = '#32CD32';
+    break;
+  case 9:
+    color = '#228B22';
+    break;
+  case 10:
+    color = '#228B22';
+    break;
+  default:
+    color = '#FFFF00';
+    break;
+    }
+    var polygon = new google.maps.Polygon({
+      paths: polygonCoords,
+      strokeColor: '#000000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: color,
+      fillOpacity: 0.35,
+      draggable:false,
+      editable: false
+    });
+    polygons.push(polygon);
+    polygon.setMap(map);
+  }
+
+  var icon = {
+    url: '<%= asset_path('neighborhood.png') %>',
+    size: new google.maps.Size(24, 27),
+    origin: new google.maps.Point(0, 0),
+    anchor: new google.maps.Point(12, 27),
+    scaledSize: new google.maps.Size(24, 27)
+  };
+
+  $.ajax({
+    url : '/neighborhoods',
+    type : 'GET',
+    contentType: "application/json"}).done(function(data) {
+      var response = JSON.stringify(data);
+      var obj = JSON.parse(response);
+      for(var i=0; i<22; i++) {
+        var ary = obj[i].coords;
+        var tmp = [];
+        var c = obj[i].centre;
+        var mloc = c.split(',');
+        var latitude = parseFloat(mloc[0]);
+        var longitude = parseFloat(mloc[1]);
+        marker = new google.maps.Marker({
+          map: map,
+          icon: icon,
+          title: obj[i].name,
+          position: new google.maps.LatLng(latitude, longitude)
+        });
+        markers.push(marker);
+
+        var locScore = calculateScore(latitude, longitude, 2);
+        
+        var infoWindowContent = '<div class="info_content">' +
+            '<h3>' + obj[i].name + '</h3>' +
+            '<h3>' + "Score: " + locScore + '</h3>' +
+            '</div>';
+
+        var infoWindow = new google.maps.InfoWindow({
+            content: infoWindowContent
+        });
+
+        bindInfoWindow(marker, map, infoWindow);
+
+        for(var e=0; e<ary.length; e++) {
+          var latlon = ary[e].split(",");
+          tmp.push(new google.maps.LatLng(parseFloat(latlon[0]),parseFloat(latlon[1])));
+        }
+        locScore = Math.round(locScore);
+        drawingPolygon(tmp,locScore);
+      }
+  });
+  $("#instagramButton").hide();
+  map.setZoom(12);
+  map.setCenter(new google.maps.LatLng(49.248619,-123.138714));
+}
+
+function resetSearch() {
+  var button = document.getElementById("selectBttn");
+  button.value = "Select All";
+  document.getElementById("loadLocation").disabled = true;
+  document.getElementById("pac-input").value = "";
+  clearOverlays();
+}
+
+function likePhoto(id) {
+  var photoBttn = document.getElementById("photo-" + id);
+  if (photoBttn.value == "Like") {
+    $.ajax({
+      url : "/photo?id=" + id + "&access_token=" + access_token + "&like=true",
+      type : "post",
+      async: false
+    });
+    photoBttn.value = "Unlike";
+  } else {
+    $.ajax({
+      url : "/photo?id=" + id + "&access_token=" + access_token,
+      type : "delete",
+      async: false
+    });
+    photoBttn.value = "Like";
+  }
+}
+
+function unlinkInstagram() {
+  $.ajax({
+    url : "/photo?link=false",
+    type : "post",
+    async: false
+  });
+  window.location = "https://housability.herokuapp.com/housability";
+}
+
+// buttons
+function showSearches(){
+  $("#loadLocation").hide();
+  $("#selectBttn").hide();
+  $("#loadNeighborhoods").hide();
+  // TODO: create check to show favorites associated with account
+
+  document.getElementById('embeded').innerHTML = "Recent Searches";
+  clearSideBarTable();
+  var table = document.getElementById("sidebarTable");
+  var tr = document.createElement("tr");
+  var td = document.createElement("td");
+  var text = document.createTextNode("Addresses");
+  td.style.width = "50%";
+  td.appendChild(text);
+  tr.appendChild(td);
+  td = document.createElement("td");
+  text = document.createTextNode("Score");
+  td.style.width = "10%";
+  td.appendChild(text);
+  tr.appendChild(td);
+  td = document.createElement("td");
+  td.style.width = "40%";
+  text = document.createTextNode("Favorite");
+  td.appendChild(text)
+  tr.appendChild(td);
+  table.appendChild(tr);
+  populateSearches();
+}
+
+function showCriteria(){
+  $("#loadLocation").show();
+  $("#selectBttn").show();
+  $("#loadNeighborhoods").show();
+  var criteria = ["Community Centers", "Libraries", "Schools", "Stations", "Parks", "Crimes"]
+  var criteriaName = ["commcentres", "libraries", "schools", "stations", "parks", "crimes"]
+  var distances = ["5", "10", "15", "20", "25"];
+  document.getElementById('embeded').innerHTML = "Select Living Criteria";
+  clearSideBarTable();
+  var table = document.getElementById("sidebarTable");
+  var tr = document.createElement("tr");
+  var td = document.createElement("td");
+  var text = document.createTextNode("Criteria");
+  td.appendChild(text);
+  tr.appendChild(td);
+  table.appendChild(tr);
+  for (i = 0; i < criteria.length; i++){
+    tr = document.createElement("tr");
+    td = document.createElement("td");
+    td.innerHTML = '<input type="checkbox" name= "' + criteriaName[i] +'" id= "' + criteriaName[i] +'" checked>' + criteria[i] + '<br>';
+    tr.appendChild(td);
+    table.appendChild(tr);
+  }
+  tr = document.createElement("tr");
+  td = document.createElement("td");
+  td.innerHTML = 'Distance <input type="text" name="radius" id="radius" value="1"  maxlength="1" size="3">'
+  tr.appendChild(td);
+  table.appendChild(tr);
+  //radio buttons
+  // for (i = 0; i < distances.length; i++){
+  //   tr = document.createElement("tr");
+  //   td = document.createElement("td");
+  //   td.innerHTML = '<input type="radio" name= "distance" value="'+ distances[i] +'" id="'+ distances[i] + '">' + distances[i] + 'km<br>';
+  //   tr.appendChild(td);
+  //   table.appendChild(tr);
+  // }
+  table.appendChild(tr);
+  tr = document.createElement("tr");
+  table.appendChild(tr);
+}
+
+function showFavorites(){
+  $("#loadLocation").hide();
+  $("#selectBttn").hide();
+  $("#loadNeighborhoods").hide();
+  // TODO: create check to show favorites associated with account
+  document.getElementById('embeded').innerHTML = "Favorites";
+  clearSideBarTable();
+  var table = document.getElementById("sidebarTable");
+  var tr = document.createElement("tr");
+  var td = document.createElement("td");
+  var text = document.createTextNode("Addresses");
+  td.style.width = "50%";
+  td.appendChild(text);
+  tr.appendChild(td);
+  td = document.createElement("td");
+  text = document.createTextNode("Score");
+  td.style.width = "10%";
+  td.appendChild(text);
+  tr.appendChild(td);
+  // td = document.createElement("td");
+  // td.style.width = "40%";
+  // text = document.createTextNode("Favorite");
+  // td.appendChild(text)
+  // tr.appendChild(td);
+  table.appendChild(tr);
+  populateFavorites();
+}
+
+function populateFavorites(){
+  $.ajax({
+      url : "/search",
+      type : "GET",
+      dataType: "json",
+      success: function(data)  {
+        var table = document.getElementById("sidebarTable");
+        for (i = 0; i < data.length; i++){
+          if (data[i].favorite == 1){
+            if (data[i].user_id == user_id){
+              var tr = document.createElement("tr");
+              var td = document.createElement("td");
+              var str = data[i].address;
+              var strarray = str.split(",");
+              str = strarray[0];
+              str = str.substr(1);
+              td.innerHTML = str;
+              tr.appendChild(td);
+              td = document.createElement("td");
+              td.innerHTML = data[i].score;
+              tr.appendChild(td);
+              // td = document.createElement("td");
+              // // add checked and reference the favorite attribute in Search
+              // td.innerHTML = '<input type="checkbox" name= "' + data[i].id +'" id= "' + data[i].id +'"><br>';
+              // tr.appendChild(td);
+              table.appendChild(tr);
+            }
+
+          }
+
+        }
+
+        tr = document.createElement("tr");
+        td = document.createElement("td");
+        tr.appendChild(td);
+        td = document.createElement("td");
+        tr.appendChild(td);
+        td = document.createElement("td");
+        // td.innerHTML = '<input type="submit" value="remove favorites">';
+        tr.appendChild(td);
+        table.appendChild(tr);
+      }
+    });
+}
+
+function populateSearches(){
+  $.ajax({
+      url : "/search",
+      type : "GET",
+      dataType: "json",
+      success: function(data)  {
+        var table = document.getElementById("sidebarTable");
+        for (i = 0; i < data.length; i ++){
+          if (data[i].user_id == user_id){
+            var tr = document.createElement("tr");
+            var td = document.createElement("td");
+            var str = data[i].address;
+            var strarray = str.split(",");
+            str = strarray[0];
+            str = str.substr(1);
+            td.innerHTML = str;
+            tr.appendChild(td);
+            td = document.createElement("td");
+            td.innerHTML = data[i].score;
+            tr.appendChild(td);
+            td = document.createElement("td");
+            // add checked and reference the favorite attribute in Search
+            td.innerHTML = '<input type="checkbox" name= "' + data[i].id +'" id= "' + data[i].id +'"><br>';
+            tr.appendChild(td);
+            table.appendChild(tr);
+          }
+        }
+        tr = document.createElement("tr");
+        td = document.createElement("td");
+        td.innerHTML = '<input type="hidden" name= "user_id" id= "user_id" value= "'+ data[0].user_id +'">'
+        tr.appendChild(td);
+        td = document.createElement("td");
+        tr.appendChild(td);
+        td = document.createElement("td");
+        td.innerHTML = '<input type="submit" value="add favorites">';
+        tr.appendChild(td);
+        table.appendChild(tr);
+      }
+    });
+}
+
+function clearSideBarTable(){
+  var table = document.getElementById("sidebarTable");
+  table.innerHTML = "";
+}

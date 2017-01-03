@@ -1,0 +1,36 @@
+<body id = 'body' style ='text-align: center'>
+  <h1 id = 'header'>  
+  <img src = 'https://cdn1.iconfinder.com/data/icons/real-estate-set-3/512/28-512.png' style=" width:50px;height:50px;" >
+  Housability
+  </h1>
+
+<div id = 'smallHeader'> Sign up </div>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+  <%= devise_error_messages! %>
+
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autofocus: true %>
+  </div>
+<br>
+  <div class="field">
+    <%= f.label :password %>
+    <% if @minimum_password_length %>
+    <em>(<%= @minimum_password_length %> characters minimum)</em>
+    <% end %><br />
+    <%= f.password_field :password, autocomplete: "off" %>
+  </div>
+<br>
+  <div class="field">
+    <%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "off" %>
+  </div>
+<br>
+  <div class="actions">
+    <%= f.submit "Sign up" %>
+  </div>
+<% end %>
+
+<%= render "devise/shared/links" %>
+</body>

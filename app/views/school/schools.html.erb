@@ -1,0 +1,24 @@
+<html>
+<head>
+  <title>Schools</title>
+</head>
+    <table cellspacing="10">
+      <tr>
+        <td>Name</td>
+        <td>Latitude</td>
+        <td>Longitude</td>
+        <td>Address</td>
+        <td>Website</td>
+
+      </tr>
+      <% @schools.each do |school| %>
+          <tr>
+            <td><%= school.name %></td>
+            <td><%= school.latitude %></td>
+            <td><%= school.longitude %></td>
+            <td><%= school.address %></td>
+            <td><%= school.website %></td>
+          </tr>
+      <% end %>
+    </table>
+</html

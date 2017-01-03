@@ -1,0 +1,96 @@
+<script src="//maps.google.com/maps/api/js?v=3.13&amp;sensor=false&amp;libraries=geometry" type="text/javascript"></script>
+<script src='//google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.14/src/markerclusterer_packed.js' type='text/javascript'></script>
+
+<body id = 'body'>
+  <div align = 'right'>
+<% if user_signed_in? %>
+    
+<% if @linked == "false" %>
+<div id = 'myButton'>
+  <a href="https://api.instagram.com/oauth/authorize/?client_id=be20222c43cb49c29e25f138432cc76e
+&redirect_uri=https://housability.herokuapp.com/housability&response_type=code&scope=basic+public_content+likes">Link Instagram Account</a>
+</div>
+<% else %>
+<div id = 'myButton'>
+  <a href="javascript:void(0);" id="instagramUnlink">Unlink Instagram Account</a>
+</div>
+<% end %>   
+<div id = 'myButton'>
+  <%= link_to('Logout', destroy_user_session_path, :method => :delete) %> 
+</div>   
+<% else %>
+<div id = 'myButton'>
+  <%= link_to('Signup', new_user_registration_path) %>
+</div>
+<div id = 'myButton'>
+  <%= link_to('Login', new_user_session_path) %>
+</div>
+<% end %>
+</div>
+<h1 id = 'header' style='margin-top : 0px;'>
+  <img src = 'https://cdn1.iconfinder.com/data/icons/real-estate-set-3/512/28-512.png' style=" width:50px;height:50px;" >
+  Housability
+</h1>
+<div id = 'sidebar'>
+  <button type="recent_searches" onclick="showSearches()" id="recentsearches">Recent Searches</button>
+  <button type="criteria" onclick="showCriteria()" id="livingcriteria">Select Living Criteria</button>
+  <button type="favorites" onclick="showFavorites()" id="favorites">Favorites</button><br>
+  <div id='Dynamic'>
+    <h4 id = 'embeded'></h4>
+    <div id="recent-searches" style='position: relative; width: 100%; height: 600px; float: left;'>
+      <form id="criteriaform" action="/housability" method="post">
+        <table id="sidebarTable" width="400">
+        </table>
+      </form>
+      <input onclick="loadLocation()" type="button" value="Resubmit" id="loadLocation" disabled></input>
+      <input onclick="selectAllCriteria()" type="button" value="Deselect All" id="selectBttn"></input><br>
+      <input onclick="loadNeighborhoods()" type="button" value="Show Neighborhoods" id="loadNeighborhoods"></input>
+    </div>
+<!--
+    <div style='margin-top: 40px'>
+      <p> Here is the data in the data base </p>
+      <a href= "https://housability.herokuapp.com/communitycentres">Community Centres Data<br></a>
+      <a href= "https://housability.herokuapp.com/crimes">Crimes Data<br></a>
+      <a href= "https://housability.herokuapp.com/libraries">Libraries Data<br></a>
+      <a href= "https://housability.herokuapp.com/parks">Parks Data<br></a>
+      <a href= "https://housability.herokuapp.com/schools">Schools Data<br></a>
+      <a href= "https://housability.herokuapp.com/stations">Station Data<br></a>
+    </div>
+-->
+  <div>
+    <h2></h2>
+    <input type="hidden" name="commcentres" id="commcentres"><br>
+    <input type="hidden" name="libraries" id="libraries"><br>
+    <input type="hidden" name="schools" value="true" id="schools"><br>
+    <input type="hidden" name="stations" value="true" id="stations"><br>
+    <input type="hidden" name="parks" value="true" id="parks"><br>
+    <input type="hidden" name="crimes" value="true" id="crimes"><br>
+    <input type="hidden" name="radius" id="radius" value="1"  maxlength="3" size="3"><br>
+    <input onclick="selectAllCriteria()" type="hidden" value="Select All" id="selectBttn"></input>
+    <input onclick="loadLocation()" type="hidden" value="Resubmit" id="loadLocation" disabled></input><br>
+    <input onclick="loadNeighborhoods()" type="hidden" value="Show Neighborhoods" id="loadNeighborhoods"></input>
+  </div>
+  </div>
+</div>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Places Searchbox</title>
+  </head>
+  <body>
+    <input id="pac-input" class="controls" type="text" placeholder="Search Address">
+    <div id="instagram">
+      <img id="instagramButton" src=<%= asset_path('instagram.png') %>/>
+      <div id="instagramPhotos"></div>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?v=3key=AIzaSyASUAWx2p0UWxUT4mHK-dzgY34i_nj9UvE&libraries=places&callback=initAutocomplete"
+         async defer></script>
+  </body>
+</html>
+
+</body>

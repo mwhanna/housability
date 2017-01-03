@@ -1,0 +1,24 @@
+<html>
+<head>
+  <title>Community Centres</title>
+</head>
+    <table cellspacing="10">
+      <tr>
+        <td>Name</td>
+        <td>Latitude</td>
+        <td>Longitude</td>
+        <td>Address</td>
+        <td>Website</td>
+
+      </tr>
+      <% @communitycentres.each do |communitycentre| %>
+          <tr>
+            <td><%= communitycentre.name %></td>
+            <td><%= communitycentre.latitude %></td>
+            <td><%= communitycentre.longitude %></td>
+            <td><%= communitycentre.address %></td>
+            <td><%= communitycentre.website %></td>
+          </tr>
+      <% end %>
+    </table>
+</html

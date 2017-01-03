@@ -1,0 +1,19 @@
+<html>
+<head>
+  <title>Stations</title>
+</head>
+    <table cellspacing="10">
+      <tr>
+        <td>Name</td>
+        <td>Latitude</td>
+        <td>Longitude</td>
+      </tr>
+      <% @stations.each do |station| %>
+          <tr>
+            <td><%= station.name %></td>
+            <td><%= station.latitude %></td>
+            <td><%= station.longitude %></td>
+          </tr>
+      <% end %>
+    </table>
+</html

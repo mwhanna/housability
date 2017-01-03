@@ -1,0 +1,21 @@
+<html>
+<head>
+	<title>Crime</title>
+</head>
+    <table cellspacing="10">
+      <tr>
+        <td>Description</td>
+        <td>Latitude</td>
+        <td>Longitude</td>
+        <td>Occurences</td>
+      </tr>
+      <% @crimes.each do |crime| %>
+          <tr>
+            <td><%= crime.description %></td>
+            <td><%= crime.latitude %></td>
+            <td><%= crime.longitude %></td>
+            <td><%= crime.occurrences %></td>
+          </tr>
+      <% end %>
+    </table>
+</html

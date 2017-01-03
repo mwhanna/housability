@@ -1,0 +1,24 @@
+<html>
+<head>
+  <title>Libraries</title>
+</head>
+    <table cellspacing="10">
+      <tr>
+        <td>Name</td>
+        <td>Latitude</td>
+        <td>Longitude</td>
+        <td>Address</td>
+        <td>Website</td>
+
+      </tr>
+      <% @libraries.each do |library| %>
+          <tr>
+            <td><%= library.name %></td>
+            <td><%= library.latitude %></td>
+            <td><%= library.longitude %></td>
+            <td><%= library.address %></td>
+            <td><%= library.website %></td>
+          </tr>
+      <% end %>
+    </table>
+</html

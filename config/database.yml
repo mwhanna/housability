@@ -1,0 +1,33 @@
+
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  database: Housability
+  username: MacroHard
+  password: cs310project
+  host: macrohard.c0fqvzq8bici.us-west-2.rds.amazonaws.com
+  port: 3306
+
+development:
+  adapter: mysql2
+  encoding: utf8
+  database: Housability
+  username: MacroHard
+  password: cs310project
+  host: macrohard.c0fqvzq8bici.us-west-2.rds.amazonaws.com
+  port: 3306
+
+test:
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+  database: db/test.sqlite3
+
+production:
+  adapter: mysql2
+  encoding: utf8
+  database: Housability
+  username: MacroHard
+  password: cs310project
+  host: macrohard.c0fqvzq8bici.us-west-2.rds.amazonaws.com
+  port: 3306
